@@ -35,3 +35,23 @@ textarea {
 .sidebar h2 {
     margin-top: 5px;
 }
+
+.update_cont a {
+    background-color: rgb(220,220,220);
+    color: black;
+    padding: 14px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 5px;
+  }
+
+.main > body > a {
+background-color: rgb(220,220,220);
+color: black;
+padding: 14px 25px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+box-shadow: 5px;
+}

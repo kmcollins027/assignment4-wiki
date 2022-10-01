@@ -1,5 +1,6 @@
 {% extends "encyclopedia/layout.html" %}
 
+
 {% block title %}
     {{ entry_name|safe }}
 {% endblock %}
@@ -7,6 +8,10 @@
 {% block body %}
     {{ entry_contents|safe }}
 
-    
+    <br>
+
+    <div class="update_cont">
+    <a href="{% url 'edit_page' %}">Update Contents</a>
+    </div>
 
 {% endblock %}

@@ -6,12 +6,13 @@
 
 {% block body %}
 <div>
-    <form action="{% url 'wiki:index' %" method="get">
+    <form action="{% url 'create_update' %}" method="post">
+        {% csrf_token %}
         <p><label for="create_entry_name">Entry Name:</label></p>
         <textarea id="create_entry_name" name="create_entry_name" rows="2" cols="50"></textarea>
         <br>
-        <p><label for="contents">Contents:</label></p>
-        <textarea id="contents" name="contents" rows="10" cols="50"></textarea>
+        <p><label for="content">Contents:</label></p>
+        <textarea id="content" name="content" rows="10" cols="50"></textarea>
         <br>
         <input type="submit" value="Create Entry">
     </form>
