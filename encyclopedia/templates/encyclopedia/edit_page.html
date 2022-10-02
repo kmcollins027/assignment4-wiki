@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block body %}
-<p>placeholder</p>
+<div>
+    <h2>Entry for {{ entry|safe }}: </h2>
+    <form action="{% url 'edit_page' entry %}" method="post">
+        {% csrf_token %}
+        <textarea id="contents" name="contents" rows="10" cols="50">{{ contents|safe }}</textarea>
+        <br>
+        <input type="submit" value="Save">
+    </form>
+</div>
 
 {% endblock %}
