@@ -1,9 +1,11 @@
 from pickletools import read_uint1
 from django.shortcuts import render, redirect
+from http.client import HTTPResponse
 from django.core.files.storage import default_storage
 
 
-from . import util
+
+from . import util, forms
 
 import markdown2
 
@@ -28,22 +30,32 @@ def wiki_entry(request, title):
 
 
 def create_page(request):
-    return render(request, "encyclopedia/create_page.html")
+    if request.method == "POST":
+        form = forms.CreateForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            content = form.cleaned_data["content"]
+            util.save_entry(title, content)
+            return redirect(wiki_entry, title=title)
+        else:
+            return render(request, "encyclopedia/create_page.html", {"form": form})
+    return render(request, "encyclopedia/create_page.html", {"form": forms.CreateForm()})
+
 
 def edit_page(request, title):
     entry = title
     contents = util.get_entry(entry)
-    context = {"entry": entry, "contents": contents}
-    return render(request, "encyclopedia/edit_page.html", context)
-    
-
-def create(request):
-
     if request.method == "POST":
-        TITLE = request.POST["create_entry_name"]
-        content = request.POST["content"]
-        util.save_entry(TITLE, content)
-        entry_name = TITLE
-        MD_to_HTML = md.convert(content)
-        context = {"entry_name": entry_name, "entry_contents": MD_to_HTML}
-        return render(request, "encyclopedia/show_entry.html", context)
+        edit_form = forms.EditForm(request.POST, instance=contents)
+        if edit_form.is_valid():
+            #title = edit_form.cleaned_data["title"]
+            content = edit_form.cleaned_data["content"]
+            util.save_entry(title, content)
+            return redirect(wiki_entry, title=title)
+        else:
+            return render(request, "encyclopedia/edit_page.html", {"edit_form": edit_form, "entry": entry})
+    return render(request, "encyclopedia/edit_page.html", {"edit_form": forms.EditForm(), "entry": entry})
+   # entry = title
+    #contents = util.get_entry(entry)
+    #context = {"entry": entry, "contents": contents}
+   # return render(request, "encyclopedia/edit_page.html", context)

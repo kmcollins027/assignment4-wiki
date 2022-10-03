@@ -6,14 +6,11 @@
 
 {% block body %}
 <div>
-    <form action="{% url 'create_update' %}" method="post">
+    <form action="{% url 'create_page' %}" method="POST">
         {% csrf_token %}
-        <p><label for="create_entry_name">Entry Name:</label></p>
-        <textarea id="create_entry_name" name="create_entry_name" rows="2" cols="50"></textarea>
-        <br>
-        <p><label for="content">Contents:</label></p>
-        <textarea id="content" name="content" rows="10" cols="50"></textarea>
-        <br>
+        <table>
+            {{ form.as_table }}
+        </table>
         <input type="submit" value="Create Entry">
     </form>
 </div>
