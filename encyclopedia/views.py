@@ -45,9 +45,7 @@ def create_page(request):
 def edit_page(request, title):
     entry = title
     contents = util.get_entry(title)
-    initial_dict = {
-            "content": util.get_entry(title)
-        }
+
     if request.method == "POST":
         edit_form = forms.EditForm(request.POST, initial={"content": contents})
         if edit_form.is_valid():
