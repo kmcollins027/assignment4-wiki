@@ -7,5 +7,4 @@ class CreateForm(forms.Form):
 
 
 class EditForm(forms.Form):
-    title = forms.CharField()
-    content = forms.CharField(widget=forms.Textarea)
+    content = forms.CharField(label="", widget=forms.Textarea)

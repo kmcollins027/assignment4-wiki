@@ -44,18 +44,20 @@ def create_page(request):
 
 def edit_page(request, title):
     entry = title
-    contents = util.get_entry(entry)
+    contents = util.get_entry(title)
+    initial_dict = {
+            "content": util.get_entry(title)
+        }
     if request.method == "POST":
-        edit_form = forms.EditForm(request.POST, instance=contents)
+        edit_form = forms.EditForm(request.POST, initial={"content": contents})
         if edit_form.is_valid():
-            #title = edit_form.cleaned_data["title"]
             content = edit_form.cleaned_data["content"]
             util.save_entry(title, content)
             return redirect(wiki_entry, title=title)
         else:
             return render(request, "encyclopedia/edit_page.html", {"edit_form": edit_form, "entry": entry})
+    else:
+        contents = util.get_entry(title)
+        edit_form = forms.EditForm(request.POST, initial={"content":contents})        
     return render(request, "encyclopedia/edit_page.html", {"edit_form": forms.EditForm(), "entry": entry})
-   # entry = title
-    #contents = util.get_entry(entry)
-    #context = {"entry": entry, "contents": contents}
-   # return render(request, "encyclopedia/edit_page.html", context)
+
