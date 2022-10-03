@@ -1,9 +1,9 @@
 from pickletools import read_uint1
 from django.shortcuts import render, redirect
-from http.client import HTTPResponse
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.core.files.storage import default_storage
-
-
+import random 
 
 from . import util, forms
 
@@ -22,7 +22,7 @@ def wiki_entry(request, title):
     entry_name = title
     contents = util.get_entry(entry_name)
     if contents is None:
-        return redirect("encyclopedia/error_page.html", {"errormsg": "Requested page not found"})
+        return redirect("encyclopedia/msg_page.html", {"errormsg": "Requested page not found"})
     else:
         MD_to_HTML = md.convert(contents)
         return render(request, "encyclopedia/show_entry.html", {"entry_contents": MD_to_HTML, "entry_name": entry_name})
@@ -35,7 +35,7 @@ def create_page(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             if title in util.list_entries():
-                return render(request, "encyclopedia/error_page.html", {"errormsg": "Entry already exists.."})
+                return render(request, "encyclopedia/msg_page.html", {"errormsg": "Entry already exists.."})
             content = form.cleaned_data["content"]
             util.save_entry(title, content)
             return redirect(wiki_entry, title=title)
@@ -57,5 +57,33 @@ def edit_page(request, title):
         edit_form = forms.EditForm(initial={"title": title, "content": contents})
         return render(request, "encyclopedia/edit_page.html", {"edit_form": edit_form, "entry": title})
 
-    #return render(request, "encyclopedia/edit_page.html", {"edit_form": forms.EditForm(), "entry": title})
+def random_page(request):
+    entry = random.choice(util.list_entries())
+    return HttpResponseRedirect(reverse("wiki_entry", args=[entry]))
+
+def search(request):
+    entry_list = util.list_entries()
+    if request.method == "POST":
+        search = request.POST.get("q")
+        if search is not None:
+            search = search.lower().strip()
+            for entry in entry_list:
+                if search == entry.lower():
+                    title = entry
+                    return HttpResponseRedirect(reverse("wiki_entry", args=[title]))
+                else:
+                    if search in entry.lower():
+                        entry_list = list(filter(lambda x: search in x.lower(), entry_list))
+                        return render(request, "encyclopedia/msg_page.html", {"search": search, "entry_list": entry_list})
+            entry_list = list(filter(lambda x: search in x.lower(), entry_list))
+            if not entry_list:
+                return render(request, "encyclopedia/msg_page.html", {"errormsg": "Entry doesn't exist"})
+
+def delete_entry(request, title):
+    filename = f"entries/{title}.md"
+    if default_storage.exists(filename):
+        default_storage.delete(filename)
+
+    return redirect(index)
+                
 
