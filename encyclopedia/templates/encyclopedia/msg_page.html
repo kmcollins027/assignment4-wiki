@@ -6,15 +6,20 @@
 
 {% block body %}
     {% if errormsg %}
-    <h1>No Matches</h1>
-    <p>{{ errormsg }}</p>
+        <h1>Error</h1>
+        <p>{{ errormsg }}</p>
     {% else %}
-    <h1>No exact matches for "{{ search }}"; the following entries are pretty close:</h1>
-    <ul>
-        {% for entry in entry_list %}
-            <li><a href="{% url 'wiki_entry' entry %}">{{ entry }}</a></li> 
-        {% endfor %}
-    </ul>
+        {% if notFound %}
+            <h1>Not Found</h1>
+            <p>{{ notFound }}</p>
+        {% else %}
+            <h1>No exact matches for "{{ search }}"; the following entries are pretty close:</h1>
+            <ul>
+                {% for entry in entry_list %}
+                    <li><a href="{% url 'wiki_entry' entry %}">{{ entry }}</a></li> 
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endif %}
 
    

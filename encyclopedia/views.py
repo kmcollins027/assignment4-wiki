@@ -77,7 +77,7 @@ def search(request):
                         return render(request, "encyclopedia/msg_page.html", {"search": search, "entry_list": entry_list})
             entry_list = list(filter(lambda x: search in x.lower(), entry_list))
             if not entry_list:
-                return render(request, "encyclopedia/msg_page.html", {"errormsg": "Entry doesn't exist"})
+                return render(request, "encyclopedia/msg_page.html", {"notFound": "Entry doesn't exist"})
 
 def delete_entry(request, title):
     filename = f"entries/{title}.md"
