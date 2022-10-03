@@ -34,6 +34,8 @@ def create_page(request):
         form = forms.CreateForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data["title"]
+            if title in util.list_entries():
+                return render(request, "encyclopedia/error_page.html", {"errormsg": "Entry already exists.."})
             content = form.cleaned_data["content"]
             util.save_entry(title, content)
             return redirect(wiki_entry, title=title)
@@ -43,19 +45,17 @@ def create_page(request):
 
 
 def edit_page(request, title):
-    entry = title
-    contents = util.get_entry(title)
-
     if request.method == "POST":
-        edit_form = forms.EditForm(request.POST, initial={"content": contents})
-        if edit_form.is_valid():
-            content = edit_form.cleaned_data["content"]
-            util.save_entry(title, content)
+        form = forms.EditForm(request.POST)
+        if form.is_valid():
+            new_content = form.cleaned_data["content"]
+            util.save_entry(title, new_content)
             return redirect(wiki_entry, title=title)
-        else:
-            return render(request, "encyclopedia/edit_page.html", {"edit_form": edit_form, "entry": entry})
+
     else:
         contents = util.get_entry(title)
-        edit_form = forms.EditForm(request.POST, initial={"content":contents})        
-    return render(request, "encyclopedia/edit_page.html", {"edit_form": forms.EditForm(), "entry": entry})
+        edit_form = forms.EditForm(initial={"title": title, "content": contents})
+        return render(request, "encyclopedia/edit_page.html", {"edit_form": edit_form, "entry": title})
+
+    #return render(request, "encyclopedia/edit_page.html", {"edit_form": forms.EditForm(), "entry": title})
 

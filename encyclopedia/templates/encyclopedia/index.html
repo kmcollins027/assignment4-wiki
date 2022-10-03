@@ -6,6 +6,9 @@
 
 {% block body %}
     <h1>All Pages</h1>
+     {% if errormsg %} 
+     {{ errormsg }}
+     {% endif %}
 
     <ul>
         {% for entry in entries %}
