@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block body %}
+
+{% if msg %}
+<p style="color:red">{{ msg }}</p>
+{% endif %}
 <div>
     <form action="{% url 'create_page' %}" method="POST">
         {% csrf_token %}

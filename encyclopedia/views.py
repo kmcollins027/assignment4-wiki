@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.files.storage import default_storage
+from django.contrib import messages 
+
 import random 
 
 from . import util, forms
@@ -19,10 +21,11 @@ def index(request):
 
 
 def wiki_entry(request, title):
+    entries = util.list_entries()
     entry_name = title
     contents = util.get_entry(entry_name)
     if contents is None:
-        return redirect("encyclopedia/msg_page.html", {"errormsg": "Requested page not found"})
+        return render("encyclopedia/index.html", {"entries": entries, "msg": "Requested page not found"})
     else:
         MD_to_HTML = md.convert(contents)
         return render(request, "encyclopedia/show_entry.html", {"entry_contents": MD_to_HTML, "entry_name": entry_name})
@@ -35,7 +38,7 @@ def create_page(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             if title in util.list_entries():
-                return render(request, "encyclopedia/msg_page.html", {"errormsg": "Entry already exists.."})
+                return render(request, "encyclopedia/create_page.html", {"form": form, "msg": "Entry already exists. Please enter a unique entry."})
             content = form.cleaned_data["content"]
             util.save_entry(title, content)
             return redirect(wiki_entry, title=title)
@@ -84,6 +87,6 @@ def delete_entry(request, title):
     if default_storage.exists(filename):
         default_storage.delete(filename)
 
+    msg = f'{title} entry was successfully deleted'
+    messages.success(request, msg)
     return redirect(index)
-                
-

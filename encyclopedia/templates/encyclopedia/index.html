@@ -6,9 +6,19 @@
 
 {% block body %}
     <h1>All Pages</h1>
-     {% if errormsg %} 
-     {{ errormsg }}
-     {% endif %}
+    {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if msg %}
+        <h1>Error</h1>
+        <p>{{ msg }}</p>
+        {% else %}
+        {% endif %}
 
     <ul>
         {% for entry in entries %}

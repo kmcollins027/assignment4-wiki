@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    {% if errormsg %}
+    {% if msg %}
         <h1>Error</h1>
-        <p>{{ errormsg }}</p>
+        <p>{{ msg }}</p>
     {% else %}
         {% if notFound %}
             <h1>Not Found</h1>
